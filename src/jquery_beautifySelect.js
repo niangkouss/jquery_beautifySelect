@@ -32,12 +32,21 @@
                     boxSizing: "border-box",
                     display: "none",
                     paddingTop:"50px",
+                    overflow:"hidden",
+                    zIndex:-99
+                },
+                optionsBorder:{
+                    maxHeight: "200px",
+                    width: "198",
+                    border: "1px solid #E0E2E4",
                     overflow:"hidden"
                 },
                 options:{
-                    border: "1px solid #E0E2E4",
+                    maxHeight: "220px",
+                    width: "218px",
                     overflowY: "scroll",
-                    maxHeight: "202px"
+                    overflowX: "scroll",
+
                 },
                 option: {
                     style: {
@@ -68,7 +77,8 @@
 
             var hideStyle = {
                 height:"0",
-                transition:"all 5s"
+                transition:"all 5s",
+                display:"none"
             };
 
             //默认样式与输入样式合并
@@ -76,11 +86,29 @@
             let $this = $(this),//获取目标
                 $select = $("<div></div>"),
                 $optionsWrapper = $("<div></div>"),
+                $optionsBorder = $("<div></div>"),
                 $ul = $("<ul></ul>"),
                 $lists = opt.optionAry,
                 isOpen=false,
-                isHover = opt.trigger
+                isHover = opt.trigger,
+                $scrollBar = $("<div></div>")
             ;
+
+            let scrollBarStyle = {
+                position:"absolute",
+                top:"50px",
+                right:"0",
+                height:"200px",
+                width:"6px",
+                backgroundColor:"#eff1f3",
+                borderRadius:"100px",
+
+            };
+
+            $optionsBorder.append($scrollBar);
+
+            //获取border的宽度
+
 
             //设置样式
             $this.css({
@@ -89,21 +117,43 @@
             });
             $select.css(opt.select.style); //select
             $this.append($select,$optionsWrapper);
-            $optionsWrapper.append($ul);
+            $optionsWrapper.append($optionsBorder);
+            $optionsBorder.append($ul);
             $ul.css(opt.options);
             $optionsWrapper.css(opt.optionsWrapper);
-            $ul.scroll(function () {
-                console.log(this);
-            });
+            $optionsBorder.css(opt.optionsBorder);
+
             if(isHover){
                 $select.hover(()=>{
+                    $ul.slideDown(200);
                     $optionsWrapper.show();
+
+                    var outHeight = $optionsBorder.height();
+                    var innnerHeight = $ul.height();
+                    var diffrence = innnerHeight- outHeight;
+                    scrollBarStyle.height = parseInt(scrollBarStyle.height) - diffrence;
+                    $scrollBar.css(scrollBarStyle);
+
+
+
+
+
                 });
             }else{
                 $select.click(()=>{
+                    $ul.slideDown(200);
                     $optionsWrapper.show();
                 });
             }
+
+            $ul.scroll( ()=> {
+                let xxx = $ul.scrollTop();
+
+                $scrollBar.css({
+                    top:50+xxx
+                });
+
+            });
 
 
             $lists.forEach(item => {
@@ -121,8 +171,12 @@
             $optionsWrapper.mouseenter(()=>{
 
             }).mouseleave(()=>{
-                $optionsWrapper.css("visibility","hidden");
+                $ul.slideUp(200);
             });
+
+
+
+
 
 
             return this;//返回jQuery本身
