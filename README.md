@@ -69,7 +69,10 @@
         }
 
     });
-```
+``` 
+
+ 最直观的是看jquery_beautfiySelect.js 里面的opt对象, opt对象里的全是默认值,在实例化的时候按照
+     opt结构按需设置css都是覆盖默认值opt的属性从而修改select的样式
 
 ### 后续
 不定期优化增强
