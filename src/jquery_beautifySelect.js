@@ -1,9 +1,15 @@
 (function () {
     var beautifySelect = function ($) {
+
         $.fn.beautifySelect = function (options) {
 
             //默认样式
             var opt = {
+                outer:{
+                    display: "inline-block",
+                    position:"relative",
+                    boxSizing:"border-box"
+                },
                 select: {
                     style: {
                         display: "inline-block",
@@ -18,186 +24,178 @@
                         zIndex:999
                     },
                     hoverStyle: {
-                        border: "1px solid #CCC"
+                        border: "1px solid #E0E2E4"
                     },
                     focusStyle: {
                         border: "1px solid #CCC"
                     }
                 },
                 optionsWrapper: {
-                    width: "200",
+                    width: "200px",
                     position: "absolute",
                     left: "0",
                     top: "0",
                     boxSizing: "border-box",
-                    display: "none",
                     paddingTop:"50px",
-                    overflow:"hidden",
-                    zIndex:-99
+                    zIndex:-99,
+                    display:"none"
                 },
                 optionsBorder:{
                     maxHeight: "200px",
                     width: "200",
                     border: "1px solid #E0E2E4",
+                    boxSizing: "border-box",
                     overflow:"hidden"
                 },
-                options:{
+                options:{ //ul 的样式
                     maxHeight: "220px",
                     width: "218px",
                     overflowY: "scroll",
                     overflowX: "scroll",
 
                 },
-                option: {
+                option: { //li
                     style: {
                         height: "36px",
                         lineHeight: "36px",
                         fontSize: "16px",
+                        color:"#333",
                         backgroundColor: "#fff",
                         listStyle: "none",
-                        textAlign:"center",
-                        cursor:"pointer"
+                        textAlign:"left",
+                        cursor:"pointer",
+                        paddingLeft:"15px"
                     },
                     hoverStyle: {
                         backgroundColor: "#F1F2F4"
                     },
                     focusStyle: {}
                 },
+                scrollBarStyle :{
+                    position:"absolute",
+                    top:"50px",
+                    right:"0",
+                    height:"200px",
+                    width:"6px",
+                    backgroundColor:"#eff1f3",
+                    borderRadius:"100px",
+                },
                 triangle: {
                     style: {},
                     hoverStyle: {},
                     focusStyle: {}
                 },
-                resultShowStyle: {
-                    display: "inline-block",
-                    width: "100%",
-                    height: "100%"
+                liSpan:{
+                    span1:{
+                        display:"inline-block",
+                        height:"100%",
+                        width:"40%"
+                    },
+                    span2:{
+                        display:"inline-block",
+                        height:"100%",
+                        width:"50%",
+                        textAlign:"right"
+                    }
                 }
             };
 
-            var hideStyle = {
-                height:"0",
-                transition:"all 5s",
-                display:"none"
-            };
+            //合并数据
+            opt = $.extend(true,{},opt,options); //和外部输入样式合并
 
-            //默认样式与输入样式合并
-           opt = $.extend(true,{},opt,options);
+            //设置结构
             let $this = $(this),//获取目标
-                $select = $("<div></div>"),
+                $select = $("<div></div>"),//
                 $optionsWrapper = $("<div></div>"),
                 $optionsBorder = $("<div></div>"),
                 $ul = $("<ul></ul>"),
+                $scrollBar = $("<div></div>"),
                 $lists = opt.optionAry,
-                isOpen=false,
                 isHover = opt.trigger,
-                $scrollBar = $("<div></div>")
-            ;
-
-            let scrollBarStyle = {
-                position:"absolute",
-                top:"50px",
-                right:"0",
-                height:"200px",
-                width:"6px",
-                backgroundColor:"#eff1f3",
-                borderRadius:"100px",
-
-            };
-
-            $optionsBorder.append($scrollBar);
-
-            //获取border的宽度
+                listsHeight = 0;
 
 
             //设置样式
-            $this.css({
-                display: "inline-block",
-                position:"relative"
-            });
+            $this.css(opt.outer);
             $select.css(opt.select.style); //select
-            $this.append($select,$optionsWrapper);
-            $optionsWrapper.append($optionsBorder);
-            $optionsBorder.append($ul);
-            $ul.css(opt.options);
             $optionsWrapper.css(opt.optionsWrapper);
             $optionsBorder.css(opt.optionsBorder);
+            $ul.css(opt.options);
+            $scrollBar.css(opt.scrollBarStyle);
 
+            $this.append($select,$optionsWrapper);
+            $optionsWrapper.append($optionsBorder);
+            $optionsBorder.append($ul,$scrollBar);
 
+            //向ul塞入内容
 
-                let totalHeight = 0;
-            $lists.forEach(item => {
-                var $li = $("<li></li>").html(item).css(opt.option.style);
-                totalHeight+= $li.height();
-                $li.hover(function () {
+            var liFunction = function (target) {
+                target.hover(function () {
                     $(this).css(opt.option.hoverStyle);
                 }, function () {
                     $(this).css(opt.option.style);
                 }).click(() => {
-                    $select.html(item);
-                    $optionsWrapper.hide();
+                    let str = "";
+                    str += target.children().html();
+                    $select.attr("value",target.attr("value")).html(str);
                 });
+            };
+
+            $lists.forEach(obj => {
+                var _length = 0;
+                for(var key in obj){
+                    if(obj.hasOwnProperty(key)){
+                        _length ++;
+                        if(_length ===1){
+                            var $li = $("<li></li>").css(opt.option.style).attr("value",obj[key]);
+                            listsHeight += parseInt($li.css("height"));
+                            liFunction($li);
+                        }else if(_length ===2){
+                            var $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span1);
+                            $li.append($span);
+                        }else{
+                            $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span2);
+                            $li.append($span);
+                        }
+                    }
+                }
                 $ul.append($li);
             });
 
-
+            var showDropdown = function () {
+                var ulHeight = $ul.height(),
+                    ulTop = parseInt($optionsWrapper.css("paddingTop")),
+                    scrollHeight = Math.floor(parseInt(opt.scrollBarStyle.height)*0.7),
+                    scrollBlank = parseInt(opt.scrollBarStyle.height)-scrollHeight;
+                $scrollBar.height(scrollHeight);
+                $ul.scroll( ()=> {
+                    let scroTop = $ul.scrollTop(),
+                        outlength = listsHeight- ulHeight,
+                        outRate = scrollBlank*(scroTop/outlength);
+                    $scrollBar.css({
+                        top:ulTop+outRate
+                    });
+                });
+            };
+            showDropdown();
+            //触发select的条件
             if(isHover){
                 $select.hover(()=>{
-                    $ul.slideDown(200);
                     $optionsWrapper.show();
-                   // var outHeight = $optionsBorder.height();
-                    var innnerHeight = $ul.height();
-                    var diffrence = ((totalHeight- innnerHeight)/innnerHeight);
-                    //取整数
-
-                    var deiffrenceZ = Math.floor(diffrence);
-                    //取小数
-                    var deffx = diffrence -deiffrenceZ;
-
-                    let scrollHeight = Math.floor(parseInt(scrollBarStyle.height)*0.7);
-                    let scrollBlank = parseInt(scrollBarStyle.height)-scrollHeight;
-                    console.log(scrollBlank);
-                    $scrollBar.css(scrollBarStyle).height(scrollHeight);
-
-
-                    $ul.scroll( ()=> {
-                        let xxx = $ul.scrollTop();
-                        let outlength = totalHeight- innnerHeight;
-                        // 能out 409 console.log(xxx);
-                       //console.log(outlength);
-                        let x = parseInt(scrollBarStyle.height)*0.4;
-                        let outRate = scrollBlank*(xxx/outlength);
-                        $scrollBar.css({
-                            top:50+outRate
-                        });
-
-                    });
-
+                    $optionsBorder.slideDown(400);
+                    showDropdown();
                 });
             }else{
                 $select.click(()=>{
-                    $ul.slideDown(200);
                     $optionsWrapper.show();
+                    $optionsBorder.slideDown(400);
+                    showDropdown();
                 });
             }
+            $this.mouseleave(()=>{
+                $optionsWrapper.slideUp(300);
 
-
-
-
-
-
-
-            $optionsWrapper.mouseenter(()=>{
-
-            }).mouseleave(()=>{
-                $ul.slideUp(200);
             });
-
-
-
-
-
-
             return this;//返回jQuery本身
         };
     };

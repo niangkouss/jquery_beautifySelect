@@ -10,6 +10,9 @@
         padding: 0;
         margin: 0;
     }
+    .target{
+        margin:  100px auto 0 300px;
+    }
 </style>
 
 <div class="target"></div>
@@ -25,7 +28,81 @@
 <script>
     //
     $(".target").beautifySelect({
-        optionAry:["1","2","7","7","1","2","7","7","1","2","7","7","7","1","2","7","7"],
+        optionAry:[
+            {
+                val:"id1",
+                showTxt1:"A项目",
+                showTxt2:"9人投票"
+            },
+            {
+                val:"id2",
+                showTxt1:"B项目",
+                showTxt2:"239人投票"
+            },
+            {
+                val:"id3",
+                showTxt1:"C项目",
+                showTxt2:"349人投票"
+            },
+            {
+                val:"id4",
+                showTxt1:"D项目",
+                showTxt2:"1219人投票"
+            },
+            {
+                val:"id1",
+                showTxt1:"A项目",
+                showTxt2:"9人投票"
+            },
+            {
+                val:"id2",
+                showTxt1:"B项目",
+                showTxt2:"239人投票"
+            },
+            {
+                val:"id3",
+                showTxt1:"C项目",
+                showTxt2:"349人投票"
+            },
+            {
+                val:"id4",
+                showTxt1:"D项目",
+                showTxt2:"1219人投票"
+            },
+            {
+                val:"id5",
+                showTxt1:"E项目",
+                showTxt2:"65人投票"
+            },
+            {
+                val:"id6",
+                showTxt1:"F项目",
+                showTxt2:"29人投票"
+            },{
+                val:"id7",
+                showTxt1:"G项目",
+                showTxt2:"19人投票"
+            },
+            {
+                val:"id6",
+                showTxt1:"F项目",
+                showTxt2:"29人投票"
+            },{
+                val:"id7",
+                showTxt1:"G项目",
+                showTxt2:"19人投票"
+            },
+            {
+                val:"id6",
+                showTxt1:"F项目",
+                showTxt2:"29人投票"
+            },{
+                val:"id7",
+                showTxt1:"G项目",
+                showTxt2:"19人投票"
+            }
+
+        ],
         trigger:"hover"
 
     });
