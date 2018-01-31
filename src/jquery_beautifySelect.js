@@ -25,7 +25,7 @@
                     }
                 },
                 optionsWrapper: {
-                    width: "200px",
+                    width: "200",
                     position: "absolute",
                     left: "0",
                     top: "0",
@@ -37,7 +37,7 @@
                 },
                 optionsBorder:{
                     maxHeight: "200px",
-                    width: "198",
+                    width: "200",
                     border: "1px solid #E0E2E4",
                     overflow:"hidden"
                 },
@@ -123,41 +123,12 @@
             $optionsWrapper.css(opt.optionsWrapper);
             $optionsBorder.css(opt.optionsBorder);
 
-            if(isHover){
-                $select.hover(()=>{
-                    $ul.slideDown(200);
-                    $optionsWrapper.show();
-
-                    var outHeight = $optionsBorder.height();
-                    var innnerHeight = $ul.height();
-                    var diffrence = innnerHeight- outHeight;
-                    scrollBarStyle.height = parseInt(scrollBarStyle.height) - diffrence;
-                    $scrollBar.css(scrollBarStyle);
 
 
-
-
-
-                });
-            }else{
-                $select.click(()=>{
-                    $ul.slideDown(200);
-                    $optionsWrapper.show();
-                });
-            }
-
-            $ul.scroll( ()=> {
-                let xxx = $ul.scrollTop();
-
-                $scrollBar.css({
-                    top:50+xxx
-                });
-
-            });
-
-
+                let totalHeight = 0;
             $lists.forEach(item => {
                 var $li = $("<li></li>").html(item).css(opt.option.style);
+                totalHeight+= $li.height();
                 $li.hover(function () {
                     $(this).css(opt.option.hoverStyle);
                 }, function () {
@@ -168,6 +139,54 @@
                 });
                 $ul.append($li);
             });
+
+
+            if(isHover){
+                $select.hover(()=>{
+                    $ul.slideDown(200);
+                    $optionsWrapper.show();
+                   // var outHeight = $optionsBorder.height();
+                    var innnerHeight = $ul.height();
+                    var diffrence = ((totalHeight- innnerHeight)/innnerHeight);
+                    //取整数
+
+                    var deiffrenceZ = Math.floor(diffrence);
+                    //取小数
+                    var deffx = diffrence -deiffrenceZ;
+
+                    let scrollHeight = Math.floor(parseInt(scrollBarStyle.height)*0.7);
+                    let scrollBlank = parseInt(scrollBarStyle.height)-scrollHeight;
+                    console.log(scrollBlank);
+                    $scrollBar.css(scrollBarStyle).height(scrollHeight);
+
+
+                    $ul.scroll( ()=> {
+                        let xxx = $ul.scrollTop();
+                        let outlength = totalHeight- innnerHeight;
+                        // 能out 409 console.log(xxx);
+                       //console.log(outlength);
+                        let x = parseInt(scrollBarStyle.height)*0.4;
+                        let outRate = scrollBlank*(xxx/outlength);
+                        $scrollBar.css({
+                            top:50+outRate
+                        });
+
+                    });
+
+                });
+            }else{
+                $select.click(()=>{
+                    $ul.slideDown(200);
+                    $optionsWrapper.show();
+                });
+            }
+
+
+
+
+
+
+
             $optionsWrapper.mouseenter(()=>{
 
             }).mouseleave(()=>{
