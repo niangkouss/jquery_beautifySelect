@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jquery_beautifySelect</title>
+</head>
+<body>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    .target{
+        margin:  100px auto 0 300px;
+    }
+</style>
+
+<div class="target"></div>
+
+
+<script
+        src="http://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+
+<script src="src/jquery_beautifySelect.js"></script>
+
+<script>
+    //
+    $(".target").beautifySelect({
+        optionAry:[
+            {
+                val:"id1",
+                showTxt1:"A项目",
+                showTxt2:"9人投票"
+            },
+            {
+                val:"id3",
+                showTxt1:"C项目",
+                showTxt2:"349人投票"
+            },
+            {
+                val:"id1",
+                showTxt1:"A项目",
+                showTxt2:"9人投票"
+            },
+            {
+                val:"id2",
+                showTxt1:"B项目",
+                showTxt2:"239人投票"
+            },
+            {
+                val:"id3",
+                showTxt1:"C项目",
+                showTxt2:"349人投票"
+            }
+
+        ],
+        trigger:"hover", //
+        defaultVal:"请选择"
+
+    });
+</script>
+</body>
+</html>
