@@ -153,7 +153,7 @@
                 opt = $.extend(true, {}, opt, options); //和外部输入样式合并
 
                 //设置结构
-                let $this = $(this),//获取目标
+                var $this = $(this),//获取目标
                     $select = $("<div></div>"),//
                     $optionsWrapper = $("<div></div>"),
                     $optionsBorder = $("<div></div>"),
@@ -182,9 +182,9 @@
                 $optionsBorder.append($ul, $scrollBar);
 
                 var setSpanStyle = function ($li, type) { //为了li里面能放两个内容,所以要分别对li子元素的span进行设置
-                    let children = $li.children(),
+                    var children = $li.children(),
                         isHover = type === 'hover';
-                    for (let i = 0; i < children.length; i++) {
+                    for (var i = 0; i < children.length; i++) {
                         if (i === 0) {
                             isHover ?
                                 $(children[i]).css(opt.liSpan.span1.hoverStyle) :
@@ -203,8 +203,8 @@
                     }, function () {
                         $(this).css(opt.option.style);
                         setSpanStyle($(this));
-                    }).click(() => {
-                        let str = "";
+                    }).click(function () {
+                        var str = "";
                         str += target.children().html();
                         $select.attr("value", target.attr("value")).html(str);
                         $select.css(opt.select.clickStyle);
@@ -224,8 +224,8 @@
                         return;
                     }
                     $scrollBar.height(scrollHeight);
-                    $ul.scroll(() => { //自定义滚动条滚动
-                        let scroTop = $ul.scrollTop(),
+                    $ul.scroll(function () {
+                        var scroTop = $ul.scrollTop(),
                             outlength = listsHeight - ulHeight,
                             outRate = scrollBlank * (scroTop / outlength);
                         $scrollBar.css({
@@ -243,7 +243,7 @@
                 };
 
                 //向ul塞入内容
-                $lists.forEach(obj => {
+                $lists.forEach(function (obj) {
                     var _length = 0;
                     for (var key in obj) {
                         if (obj.hasOwnProperty(key)) {
@@ -268,21 +268,21 @@
                 showDropdown();
                 //触发select的条件
                 if (isHover) {
-                    $select.hover(() => {
+                    $select.hover(function () {
                         $optionsWrapper.show();
                         $optionsBorder.slideDown(400);
                         showDropdown();
                         triangleEnter();
                     });
                 } else {
-                    $select.click(() => {
+                    $select.click(function () {
                         $optionsWrapper.show();
                         $optionsBorder.slideDown(400);
                         showDropdown();
                         triangleEnter();
                     });
                 }
-                $this.mouseleave(() => {
+                $this.mouseleave(function () {
                     $optionsWrapper.slideUp(300);
                     triangleLeave();
                 });

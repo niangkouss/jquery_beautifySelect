@@ -71,8 +71,8 @@
 
     });
 ``` 
-
-
+### 兼容性测试
+IE9+ 通过
 
 ### 示例
   ![image](https://github.com/niangkouss/pics/raw/master/select.png)
