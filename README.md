@@ -7,7 +7,8 @@
 ### 详细说明(可不看,最基本的用法看sample.html就可以)
 
   除了optionAry是必填的,其他都有默认值,选填
-
+ 最直观的是看jquery_beautfiySelect.js 里面的opt对象, opt对象里的全是默认值,在实例化的时候按照
+     opt结构按需设置css都是覆盖默认值opt的属性从而修改select的样式
 
 ```javascript
  $(".target").beautifySelect({
@@ -71,8 +72,7 @@
     });
 ``` 
 
- 最直观的是看jquery_beautfiySelect.js 里面的opt对象, opt对象里的全是默认值,在实例化的时候按照
-     opt结构按需设置css都是覆盖默认值opt的属性从而修改select的样式
+
 
 ### 示例
   ![image](https://github.com/niangkouss/pics/raw/master/select.png)

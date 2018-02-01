@@ -22,7 +22,11 @@
                         borderRadius: "3px",
                         cursor: "pointer",
                         textAlign: "center",
-                        zIndex: 999
+                        zIndex: 999,
+                        color:"#AAA"//这个是默认显示的字体颜色
+                    },
+                    clickStyle:{
+                        color:"#333"//这个是select选中之后的字体颜色
                     },
                     hoverStyle: {
                         border: "1px solid #E0E2E4"
@@ -136,13 +140,16 @@
                 defaultVal: "请选择"
             };
 
-            //合并数据
-            opt = $.extend(true, {}, opt, options); //和外部输入样式合并
+
 
 
 
 
             this.each(function () {
+
+
+                //合并数据
+                opt = $.extend(true, {}, opt, options); //和外部输入样式合并
 
                 //设置结构
                 let $this = $(this),//获取目标
@@ -158,6 +165,9 @@
 
 
                 //设置样式
+                opt.options.width = opt.optionsBorder.width=opt.optionsWrapper.width;
+                opt.options.width = parseInt(opt.options.width)+18;
+
                 $this.css(opt.outer);
                 $select.css(opt.select.style).html(opt.defaultVal); //select
                 $optionsWrapper.css(opt.optionsWrapper);
@@ -196,6 +206,7 @@
                         let str = "";
                         str += target.children().html();
                         $select.attr("value", target.attr("value")).html(str);
+                        $select.css(opt.select.clickStyle);
                         $optionsWrapper.slideUp(300);
                         triangleLeave();
                     });
