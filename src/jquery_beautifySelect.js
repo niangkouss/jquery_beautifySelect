@@ -139,135 +139,144 @@
             //合并数据
             opt = $.extend(true, {}, opt, options); //和外部输入样式合并
 
-            //设置结构
-            let $this = $(this),//获取目标
-                $select = $("<div></div>"),//
-                $optionsWrapper = $("<div></div>"),
-                $optionsBorder = $("<div></div>"),
-                $ul = $("<ul></ul>"),
-                $scrollBar = $("<div></div>"),
-                $triangle = $("<i></i>"),
-                $lists = opt.optionAry,
-                isHover = opt.trigger,
-                listsHeight = 0;
 
 
-            //设置样式
-            $this.css(opt.outer);
-            $select.css(opt.select.style).html(opt.defaultVal); //select
-            $optionsWrapper.css(opt.optionsWrapper);
-            $optionsBorder.css(opt.optionsBorder);
-            $ul.css(opt.options);
-            $triangle.css(opt.triangle.style);
-            $scrollBar.css(opt.scrollBarStyle);
 
-            $this.append($select, $optionsWrapper,$triangle);
-            $optionsWrapper.append($optionsBorder);
-            $optionsBorder.append($ul, $scrollBar);
+            this.each(function () {
 
-            var setSpanStyle = function ($li, type) { //为了li里面能放两个内容,所以要分别对li子元素的span进行设置
-                let children = $li.children(),
-                    isHover = type === 'hover';
-                for (let i = 0; i < children.length; i++) {
-                    if (i === 0) {
-                        isHover ?
-                            $(children[i]).css(opt.liSpan.span1.hoverStyle) :
-                            $(children[i]).css(opt.liSpan.span1.style);
-                    } else {
-                        isHover ?
-                            $(children[i]).css(opt.liSpan.span2.hoverStyle) :
-                            $(children[i]).css(opt.liSpan.span2.style);
+                //设置结构
+                let $this = $(this),//获取目标
+                    $select = $("<div></div>"),//
+                    $optionsWrapper = $("<div></div>"),
+                    $optionsBorder = $("<div></div>"),
+                    $ul = $("<ul></ul>"),
+                    $scrollBar = $("<div></div>"),
+                    $triangle = $("<i></i>"),
+                    $lists = opt.optionAry,
+                    isHover = opt.trigger,
+                    listsHeight = 0;
+
+
+                //设置样式
+                $this.css(opt.outer);
+                $select.css(opt.select.style).html(opt.defaultVal); //select
+                $optionsWrapper.css(opt.optionsWrapper);
+                $optionsBorder.css(opt.optionsBorder);
+                $ul.css(opt.options);
+                $triangle.css(opt.triangle.style);
+                $scrollBar.css(opt.scrollBarStyle);
+
+                $this.append($select, $optionsWrapper,$triangle);
+                $optionsWrapper.append($optionsBorder);
+                $optionsBorder.append($ul, $scrollBar);
+
+                var setSpanStyle = function ($li, type) { //为了li里面能放两个内容,所以要分别对li子元素的span进行设置
+                    let children = $li.children(),
+                        isHover = type === 'hover';
+                    for (let i = 0; i < children.length; i++) {
+                        if (i === 0) {
+                            isHover ?
+                                $(children[i]).css(opt.liSpan.span1.hoverStyle) :
+                                $(children[i]).css(opt.liSpan.span1.style);
+                        } else {
+                            isHover ?
+                                $(children[i]).css(opt.liSpan.span2.hoverStyle) :
+                                $(children[i]).css(opt.liSpan.span2.style);
+                        }
                     }
+                };
+                var liFunction = function (target) { //对下拉列表的li功能做绑定
+                    target.hover(function () {
+                        $(this).css(opt.option.hoverStyle);
+                        setSpanStyle($(this), "hover");
+                    }, function () {
+                        $(this).css(opt.option.style);
+                        setSpanStyle($(this));
+                    }).click(() => {
+                        let str = "";
+                        str += target.children().html();
+                        $select.attr("value", target.attr("value")).html(str);
+                        $optionsWrapper.slideUp(300);
+                        triangleLeave();
+                    });
+                };
+
+                var showDropdown = function () { //列表下拉函数
+                    var ulHeight = $ul.height(),
+                        ulTop = parseInt($optionsWrapper.css("paddingTop")),
+                        scrollHeight = Math.floor(parseInt(opt.scrollBarStyle.height) * 0.7),
+                        scrollBlank = parseInt(opt.scrollBarStyle.height) - scrollHeight,
+                        needScollbar = listsHeight-$ul.height();
+                    if(needScollbar<=0){
+                        $scrollBar.hide();
+                        return;
+                    }
+                    $scrollBar.height(scrollHeight);
+                    $ul.scroll(() => { //自定义滚动条滚动
+                        let scroTop = $ul.scrollTop(),
+                            outlength = listsHeight - ulHeight,
+                            outRate = scrollBlank * (scroTop / outlength);
+                        $scrollBar.css({
+                            top: ulTop + outRate
+                        });
+                    });
+
+                };
+
+                var triangleEnter = function () {
+                    $triangle.css(opt.triangle.animateEnterStyle);
+                };
+                var triangleLeave = function () {
+                    $triangle.css(opt.triangle.animateLeaveStyle);
+                };
+
+                //向ul塞入内容
+                $lists.forEach(obj => {
+                    var _length = 0;
+                    for (var key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            _length++;
+                            if (_length === 1) {
+                                var $li = $("<li></li>").css(opt.option.style).attr("value", obj[key]);
+                                listsHeight += parseInt($li.css("height"));
+                                liFunction($li);
+                            } else if (_length === 2) {
+                                var $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span1.style);
+                                $li.append($span);
+                            } else {
+                                $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span2.style);
+                                $li.append($span);
+                            }
+                        }
+                    }
+                    $ul.append($li);
+                });
+
+
+                showDropdown();
+                //触发select的条件
+                if (isHover) {
+                    $select.hover(() => {
+                        $optionsWrapper.show();
+                        $optionsBorder.slideDown(400);
+                        showDropdown();
+                        triangleEnter();
+                    });
+                } else {
+                    $select.click(() => {
+                        $optionsWrapper.show();
+                        $optionsBorder.slideDown(400);
+                        showDropdown();
+                        triangleEnter();
+                    });
                 }
-            };
-            var liFunction = function (target) { //对下拉列表的li功能做绑定
-                target.hover(function () {
-                    $(this).css(opt.option.hoverStyle);
-                    setSpanStyle($(this), "hover");
-                }, function () {
-                    $(this).css(opt.option.style);
-                    setSpanStyle($(this));
-                }).click(() => {
-                    let str = "";
-                    str += target.children().html();
-                    $select.attr("value", target.attr("value")).html(str);
+                $this.mouseleave(() => {
                     $optionsWrapper.slideUp(300);
                     triangleLeave();
                 });
-            };
-
-            var showDropdown = function () { //列表下拉函数
-                var ulHeight = $ul.height(),
-                    ulTop = parseInt($optionsWrapper.css("paddingTop")),
-                    scrollHeight = Math.floor(parseInt(opt.scrollBarStyle.height) * 0.7),
-                    scrollBlank = parseInt(opt.scrollBarStyle.height) - scrollHeight,
-                    needScollbar = listsHeight-$ul.height();
-                if(needScollbar<=0){
-                    $scrollBar.hide();
-                    return;
-                }
-                $scrollBar.height(scrollHeight);
-                $ul.scroll(() => { //自定义滚动条滚动
-                    let scroTop = $ul.scrollTop(),
-                        outlength = listsHeight - ulHeight,
-                        outRate = scrollBlank * (scroTop / outlength);
-                    $scrollBar.css({
-                        top: ulTop + outRate
-                    });
-                });
-
-            };
-
-            var triangleEnter = function () {
-                $triangle.css(opt.triangle.animateEnterStyle);
-            };
-            var triangleLeave = function () {
-                $triangle.css(opt.triangle.animateLeaveStyle);
-            };
-
-            //向ul塞入内容
-            $lists.forEach(obj => {
-                var _length = 0;
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        _length++;
-                        if (_length === 1) {
-                            var $li = $("<li></li>").css(opt.option.style).attr("value", obj[key]);
-                            listsHeight += parseInt($li.css("height"));
-                            liFunction($li);
-                        } else if (_length === 2) {
-                            var $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span1.style);
-                            $li.append($span);
-                        } else {
-                            $span = $("<span></span>").html(obj[key]).css(opt.liSpan.span2.style);
-                            $li.append($span);
-                        }
-                    }
-                }
-                $ul.append($li);
-            });
 
 
-            showDropdown();
-            //触发select的条件
-            if (isHover) {
-                $select.hover(() => {
-                    $optionsWrapper.show();
-                    $optionsBorder.slideDown(400);
-                    showDropdown();
-                    triangleEnter();
-                });
-            } else {
-                $select.click(() => {
-                    $optionsWrapper.show();
-                    $optionsBorder.slideDown(400);
-                    showDropdown();
-                    triangleEnter();
-                });
-            }
-            $this.mouseleave(() => {
-                $optionsWrapper.slideUp(300);
-                triangleLeave();
+
             });
             return this;//返回jQuery本身
         };

@@ -16,6 +16,7 @@
 </style>
 
 <div class="target"></div>
+<div class="target2"></div>
 
 
 <script
@@ -78,6 +79,23 @@
         ],
         trigger:"hover", //
         defaultVal:"请选择"
+
+    });
+
+    $(".target2").beautifySelect({
+        optionAry:[
+            {
+                val:"id2",
+                showTxt1:"B项目",
+                showTxt2:"239人投票"
+            },
+            {
+                val:"id3",
+                showTxt1:"C项目",
+                showTxt2:"349人投票"
+            }
+
+        ]
 
     });
 </script>
