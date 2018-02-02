@@ -77,12 +77,13 @@
                 },
                 scrollBarStyle: {
                     position: "absolute",
-                    top: "50px",
+                    top: "53px",
                     right: "0",
                     height: "200px",
                     width: "6px",
                     backgroundColor: "#CCCCCC",
                     borderRadius: "100px",
+                    opacity: 0.5
                 },
                 triangle: {
                     style: {
@@ -205,12 +206,14 @@
                     }else{
                         var $lis =$ul.children();
                         for (var i = 0; i < $lis.length; i++) {
-                            let selected =$($lis[i]).hasClass("selected");
-                            if(selected){
-                                return;
-                            }
                             $($lis[i]).children().eq(0).css(opt.liSpan.span1.style);
                             $($lis[i]).children().eq(1).css(opt.liSpan.span2.style);
+                            let selected =$($lis[i]).hasClass("selected");
+                            if(selected){
+                                $($lis[i]).children().eq(0).css(opt.liSpan.selectedStyle);
+                                $($lis[i]).children().eq(1).css(opt.liSpan.selectedStyle);
+                            }
+
                         }
                     }
 
