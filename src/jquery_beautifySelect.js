@@ -57,8 +57,7 @@
                     width: "218px",
                     overflowY: "scroll",
                     overflowX: "hidden",
-                    paddingBottom:"15px"
-
+                    paddingBottom:"15px",
                 },
                 option: { //li
                     style: {
@@ -69,8 +68,7 @@
                         backgroundColor: "#fff",
                         listStyle: "none",
                         textAlign: "left",
-                        cursor: "pointer",
-                        paddingLeft: "15px"
+                        cursor: "pointer"
                     },
                     hoverStyle: {
                         backgroundColor: "#F1F2F4"
@@ -83,7 +81,7 @@
                     right: "0",
                     height: "200px",
                     width: "6px",
-                    backgroundColor: "#eff1f3",
+                    backgroundColor: "#CCCCCC",
                     borderRadius: "100px",
                 },
                 triangle: {
@@ -117,8 +115,9 @@
                             display: "inline-block",
                             height: "100%",
                             width: "40%",
-                            color: "#333",
-                            fontSize: "16px"
+                            color: "#151515",
+                            fontSize: "16px",
+                            paddingLeft:"22px"
                         },
                         hoverStyle: {
                             color: "#868686"
@@ -130,12 +129,15 @@
                             height: "100%",
                             width: "50%",
                             textAlign: "right",
-                            color: "#333",
+                            color: "#151515",
                             fontSize: "12px"
                         },
                         hoverStyle: {
                             color: "#868686"
                         }
+                    },
+                    selectedStyle:{ //li被选中之后内容的样式
+                        color:"#3380F4"
                     }
                 },
                 defaultVal: "请选择"
@@ -182,19 +184,36 @@
                 $optionsBorder.append($ul, $scrollBar);
 
                 var setSpanStyle = function ($li, type) { //为了li里面能放两个内容,所以要分别对li子元素的span进行设置
-                    var children = $li.children(),
-                        isHover = type === 'hover';
-                    for (var i = 0; i < children.length; i++) {
-                        if (i === 0) {
-                            isHover ?
-                                $(children[i]).css(opt.liSpan.span1.hoverStyle) :
-                                $(children[i]).css(opt.liSpan.span1.style);
-                        } else {
-                            isHover ?
-                                $(children[i]).css(opt.liSpan.span2.hoverStyle) :
-                                $(children[i]).css(opt.liSpan.span2.style);
+                    if($li){
+                        let selected = $li.hasClass("selected");
+                        if(selected){
+                            return;
+                        }
+                        var children = $li.children(),
+                            isHover = type === 'hover';
+                        for (var i = 0; i < children.length; i++) {
+                            if (i === 0) {
+                                isHover ?
+                                    $(children[i]).css(opt.liSpan.span1.hoverStyle) :
+                                    $(children[i]).css(opt.liSpan.span1.style);
+                            } else {
+                                isHover ?
+                                    $(children[i]).css(opt.liSpan.span2.hoverStyle) :
+                                    $(children[i]).css(opt.liSpan.span2.style);
+                            }
+                        }
+                    }else{
+                        var $lis =$ul.children();
+                        for (var i = 0; i < $lis.length; i++) {
+                            let selected =$($lis[i]).hasClass("selected");
+                            if(selected){
+                                return;
+                            }
+                            $($lis[i]).children().eq(0).css(opt.liSpan.span1.style);
+                            $($lis[i]).children().eq(1).css(opt.liSpan.span2.style);
                         }
                     }
+
                 };
                 var liFunction = function (target) { //对下拉列表的li功能做绑定
                     target.hover(function () {
@@ -205,11 +224,17 @@
                         setSpanStyle($(this));
                     }).click(function () {
                         var str = "";
+
+                        target.addClass("selected").siblings().removeClass("selected");
+                        target.children().css(opt.liSpan.selectedStyle);
                         str += target.children().html();
                         $select.attr("value", target.attr("value")).html(str);
                         $select.css(opt.select.clickStyle);
                         $optionsWrapper.slideUp(300);
                         triangleLeave();
+
+
+                        setSpanStyle();
                     });
                 };
 
